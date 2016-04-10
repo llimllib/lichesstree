@@ -1,6 +1,8 @@
+from copy import deepcopy
 import json
 import os.path
 import pickle
+from pprint import pprint as pp
 import sys
 import time
 import requests
@@ -46,12 +48,17 @@ def get_color(game, user):
 def build_tree(games, user):
     root = {
         WHITE: {},
-        BLACK: {}
+        BLACK: {},
+        "username": user,
     }
 
     for game in games:
         # skip chess960, crazyhouse, etc
         if game["variant"] != "standard":
+            continue
+
+        # games can be won without moves. We don't want those.
+        if not game['moves']:
             continue
 
         color = get_color(game, user)
@@ -71,19 +78,29 @@ def build_tree(games, user):
         for move in moves:
             if move in leaf:
                 leaf[move]["count"] += 1
+                leaf[move]["win"] += win
+                leaf[move]["lose"] += lose
+                leaf[move]["draw"] += draw
                 leaf[move]["games"].add(game["id"])
             else:
                 leaf[move] = {
                     "count": 1,
-                    "win": 0,
-                    "draw": 0,
-                    "lose": 0,
+                    "win": win,
+                    "draw": draw,
+                    "lose": lose,
                     "games": { game["id"] }
                 }
 
             leaf = leaf[move]
 
     return root
+
+# XXX: just here for debugging purposes
+def print_node(node):
+    c = deepcopy(node)
+    if 'children' in c:
+        del(c['children'])
+    pp(c)
 
 def d3_branch(root, move=None):
     newroot = {"children": []}
@@ -99,6 +116,7 @@ def d3_branch(root, move=None):
         else:
             # recurse
             newroot["children"].append(d3_branch(val, key))
+
     return newroot
 
 # return a tree in d3 format, like http://bl.ocks.org/mbostock/raw/4063550/flare.json
