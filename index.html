@@ -1,5 +1,5 @@
-
 <!DOCTYPE html>
+<html><head>
 <meta charset="utf-8">
 <style>
 
@@ -24,7 +24,10 @@
 }
 
 </style>
+</head>
 <body>
+  <h1 id="username"></h1>
+
 <script src="//d3js.org/d3.v3.min.js"></script>
 <script>
 
@@ -42,16 +45,19 @@ var tree = d3.layout.tree()
 var diagonal = d3.svg.diagonal()
     .projection(function(d) { return [d.y, d.x]; });
 
+
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.right + margin.left)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("/test_tree.json", function(error, movetrees) {
+d3.json("/test_tree.json", function(error, tree) {
   if (error) throw error;
 
-  root = movetrees.white;
+  document.querySelector("#username").innerText = tree.username;
+
+  root = tree.white;
   root.x0 = height / 2;
   root.y0 = 0;
 
@@ -70,7 +76,6 @@ d3.json("/test_tree.json", function(error, movetrees) {
 d3.select(self.frameElement).style("height", "800px");
 
 function update(source) {
-
   // Compute the new tree layout.
   var nodes = tree.nodes(root).reverse(),
       links = tree.links(nodes);
@@ -169,3 +174,4 @@ function click(d) {
 }
 
 </script>
+</body>
