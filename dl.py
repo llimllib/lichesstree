@@ -49,7 +49,6 @@ def build_tree(games, user):
     root = {
         WHITE: {},
         BLACK: {},
-        "username": user,
     }
 
     for game in games:
@@ -139,5 +138,8 @@ if __name__=="__main__":
         json.dump(games, open(fname, 'w'))
 
     root = build_tree(games, user)
+
     d3tree = d3_format(root)
+    d3tree["username"] = user
+
     json.dump(d3tree, open("test_tree.json", 'w'), indent=2)
