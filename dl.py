@@ -68,7 +68,9 @@ def build_tree(games, user):
         if "winner" in game:
             win = 1 if game["winner"] == color else 0
             lose = 1 - win
-        elif game["status"] in ["draw", "stalemate"]:
+        elif game["status"] in ["draw", "stalemate", "outoftime", "timeout"]:
+            # note that we can only do this on 'outoftime' statuses here
+            # because we've eliminated cases where there's a winner
             draw = 1
         else:
             print(game)
@@ -129,7 +131,7 @@ def d3_format(tree):
     return d3_tree
 
 if __name__=="__main__":
-    user = "parrotz"
+    user = "llimllib"
     fname = "{user}.json".format(**locals())
     if os.path.isfile(fname):
         games = json.load(open(fname))
