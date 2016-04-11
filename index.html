@@ -14,7 +14,7 @@
 }
 
 .node text {
-  font: 10px sans-serif;
+  font: 20px sans-serif;
 }
 
 .link {
@@ -28,7 +28,8 @@
 <body>
   <h1 id="username"></h1>
 
-<script src="//d3js.org/d3.v3.min.js"></script>
+<!-- <script src="//d3js.org/d3.v3.min.js"></script> -->
+<script src="static/js/d3.v3.min.js"></script>
 <script>
 
 var margin = {top: 20, right: 120, bottom: 20, left: 120},
@@ -37,7 +38,9 @@ var margin = {top: 20, right: 120, bottom: 20, left: 120},
 
 var i = 0,
     duration = 750,
-    root;
+    root,
+    maxCount,
+    radiusScale;
 
 var tree = d3.layout.tree()
     .size([height, width]);
@@ -70,6 +73,10 @@ d3.json("/test_tree.json", function(error, tree) {
   }
 
   root.children.forEach(collapse);
+
+  maxCount = d3.max(root.children.map(function(n) { return n.count; }));
+  radiusScale = d3.scale.log().domain([1, maxCount]).range([3, 10]);
+
   update(root);
 });
 
@@ -94,11 +101,13 @@ function update(source) {
       .on("click", click);
 
   nodeEnter.append("circle")
-      .attr("r", 1e-6)
+      .attr("r", function(d) {
+        return radiusScale(d.count) || 10; 
+      })
       .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
 
   nodeEnter.append("text")
-      .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
+      .attr("x", function(d) { return d.children || d._children ? -20 : 20; })
       .attr("dy", ".35em")
       .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
       .text(function(d) { return d.move; })
@@ -110,7 +119,9 @@ function update(source) {
       .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
 
   nodeUpdate.select("circle")
-      .attr("r", 4.5)
+      .attr("r", function(d) {
+        return radiusScale(d.count) || 10;
+      })
       .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
 
   nodeUpdate.select("text")
