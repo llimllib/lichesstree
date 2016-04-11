@@ -55,12 +55,12 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("/test_tree.json", function(error, tree) {
+d3.json("/test_tree.json", function(error, movetree) {
   if (error) throw error;
 
-  document.querySelector("#username").innerText = tree.username;
+  document.querySelector("#username").innerText = movetree.username;
 
-  root = tree.white;
+  root = movetree.white;
   root.x0 = height / 2;
   root.y0 = 0;
 
