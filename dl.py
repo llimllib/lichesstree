@@ -128,6 +128,7 @@ def d3_format(tree):
         BLACK: {}
     }
     d3_tree[WHITE] = d3_branch(tree[WHITE])
+    d3_tree[BLACK] = d3_branch(tree[BLACK])
     return d3_tree
 
 if __name__=="__main__":
