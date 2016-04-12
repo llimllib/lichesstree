@@ -23,10 +23,29 @@
   stroke-width: 1.5px;
 }
 
+.left {
+  position: absolute;
+  top: 700px;
+  left: 20px;
+  width: 200px;
+  height: 450px;
+  overflow: auto;
+}
+
 </style>
 </head>
 <body>
-  <h1 id="username"></h1>
+  <div class="left">
+    <div id="move"></div>
+    <div id="results"></div>
+    <div>
+      <ul id="games"></ul>
+    </div>
+  </div>
+
+  <div class="main">
+    <h1 id="username"></h1>
+  </div>
 
 <!-- <script src="//d3js.org/d3.v3.min.js"></script> -->
 <script src="static/js/d3.v3.min.js"></script>
@@ -58,7 +77,7 @@ var diagonal = d3.svg.diagonal()
     .projection(function(d) { return [d.y, d.x]; });
 
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select(".main").append("svg")
     .attr("width", width + margin.right + margin.left)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
@@ -190,6 +209,18 @@ function update(source) {
   });
 }
 
+function display(d) {
+  d3.select("#move").html("<em>move:</em> " + d.move);
+  d3.select("#results").html(d.win+"+ "+d.draw+"= "+d.lose+"- ");
+  d.games.forEach(function(g) {
+    d3.select("#games")
+      .append("li")
+      .append("a")
+        .attr("href", "http://lichess.org/"+g)
+        .text(g)
+  });
+}
+
 // Toggle children on click.
 function click(d) {
   if (d.children) {
@@ -200,6 +231,7 @@ function click(d) {
     d._children = null;
   }
   update(d);
+  display(d);
 }
 
 </script>
