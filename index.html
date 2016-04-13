@@ -7,7 +7,6 @@
 <html><head>
 <meta charset="utf-8">
 <style>
-
 .node {
   cursor: pointer;
 }
@@ -37,6 +36,14 @@
   overflow: auto;
 }
 
+.main {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+}
+
 </style>
 </head>
 <body>
@@ -48,17 +55,17 @@
     </div>
   </div>
 
+  <h1 id="username"></h1>
+
   <div class="main">
-    <h1 id="username"></h1>
   </div>
 
-<!-- <script src="//d3js.org/d3.v3.min.js"></script> -->
-<script src="static/js/d3.v3.min.js"></script>
+<script src="//d3js.org/d3.v3.min.js"></script>
 <script>
 
 var margin = {top: 20, right: 120, bottom: 20, left: 120},
     width = 2000 - margin.right - margin.left,
-    height = 800 - margin.top - margin.bottom;
+    height = 1000 - margin.top - margin.bottom;
 
 var i = 0,
     duration = 750,
@@ -72,11 +79,11 @@ var r = d3.rgb(239,138,98),
     colorScale = d3.scale.linear().domain([0.35, 0.55]).range([0,1]).clamp(true);
 
 function zoom() {
-  console.log("zoom", d3.event.translate);
-  mainGroup.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+  var x = d3.event.translate[0] + margin.left,
+      y = d3.event.translate[1] + margin.top;
+  mainGroup.attr("transform", "translate("+x+","+y+")scale(" + d3.event.scale + ")");
 }
 
-// define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
 var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
 
 var tree = d3.layout.tree()
@@ -89,10 +96,9 @@ var tree = d3.layout.tree()
 var diagonal = d3.svg.diagonal()
     .projection(function(d) { return [d.y, d.x]; });
 
-
 var svg = d3.select(".main").append("svg")
-    .attr("width", width + margin.right + margin.left)
-    .attr("height", height + margin.top + margin.bottom)
+    .attr("width", width)
+    .attr("height", height)
     .call(zoomListener),
     mainGroup = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
