@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+
+<!-- http://bl.ocks.org/mbostock/raw/4063550/flare.json -->
+<!-- http://bl.ocks.org/robschmuecker/7880033 -->
+<!-- http://bl.ocks.org/nitaku/564b91e8e9e7cbc7821f -->
+
 <html><head>
 <meta charset="utf-8">
 <style>
@@ -66,6 +71,14 @@ var r = d3.rgb(239,138,98),
     gradient = d3.interpolateRgb(r, b),
     colorScale = d3.scale.linear().domain([0.35, 0.55]).range([0,1]).clamp(true);
 
+function zoom() {
+  console.log("zoom", d3.event.translate);
+  mainGroup.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+}
+
+// define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
+var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
+
 var tree = d3.layout.tree()
     .size([height, width])
     .sort(function(a, b) {
@@ -80,7 +93,8 @@ var diagonal = d3.svg.diagonal()
 var svg = d3.select(".main").append("svg")
     .attr("width", width + margin.right + margin.left)
     .attr("height", height + margin.top + margin.bottom)
-  .append("g")
+    .call(zoomListener),
+    mainGroup = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 d3.json("/test_tree.json", function(error, movetree) {
@@ -88,7 +102,7 @@ d3.json("/test_tree.json", function(error, movetree) {
 
   document.querySelector("#username").innerText = movetree.username;
 
-  root = movetree.white;
+  root = movetree.black;
   root.x0 = height / 2;
   root.y0 = 0;
 
@@ -119,7 +133,7 @@ function update(source) {
   nodes.forEach(function(d) { d.y = d.depth * 180; });
 
   // Update the nodes…
-  var node = svg.selectAll("g.node")
+  var node = mainGroup.selectAll("g.node")
       .data(nodes, function(d) { return d.id || (d.id = ++i); });
 
   // Enter any new nodes at the parent's previous position.
@@ -135,10 +149,9 @@ function update(source) {
       .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
 
   nodeEnter.append("text")
-      //.attr("x", function(d) { return d.children || d._children ? -20 : 20; })
-      .attr("x", function(d) { return 10; })
+      .attr("x", function(d) { return 0; })
       .attr("dy", ".35em")
-      .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
+      .attr("text-anchor", "middle")
       .text(function(d) { return d.move; })
       .style("fill-opacity", 1e-6);
 
@@ -169,7 +182,7 @@ function update(source) {
       .style("fill-opacity", 1e-6);
 
   // Update the links…
-  var link = svg.selectAll("path.link")
+  var link = mainGroup.selectAll("path.link")
       .data(links, function(d) { return d.target.id; });
 
   // Enter any new links at the parent's previous position.
