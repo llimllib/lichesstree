@@ -51,7 +51,7 @@ def build_tree(games, user):
         BLACK: {},
     }
 
-    for game in games:
+    for game in games[:200]:
         # skip chess960, crazyhouse, etc
         if game["variant"] != "standard":
             continue
@@ -103,7 +103,7 @@ def print_node(node):
         del(c['children'])
     pp(c)
 
-def d3_branch(root, move=None):
+def d3_branch(root, move=None, depth=0):
     newroot = {"children": []}
 
     if move:
@@ -116,7 +116,8 @@ def d3_branch(root, move=None):
             newroot["games"] = list(val)
         else:
             # recurse
-            newroot["children"].append(d3_branch(val, key))
+            if depth < 11:
+                newroot["children"].append(d3_branch(val, key, depth+1))
 
     return newroot
 
