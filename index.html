@@ -103,7 +103,7 @@ var svg = d3.select(".main").append("svg")
     mainGroup = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("/test_tree.json", function(error, movetree) {
+d3.json("test_tree.json", function(error, movetree) {
   if (error) throw error;
 
   document.querySelector("#username").innerText = movetree.username;
