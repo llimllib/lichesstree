@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 from copy import deepcopy
 import json
 import os.path
@@ -10,17 +11,23 @@ import requests
 BLACK = "black"
 WHITE = "white"
 
+def w(s):
+    sys.stdout.write(s)
+    sys.stdout.flush()
+
 def get_all_games(user):
     games = []
     page = 1
     while 1:
-        sys.stdout.write(".")
+        w(".")
+
         url = ("http://en.lichess.org/api/user/{user}/games?"
               "nb=100&with_moves=1&page={page}")
 
         res = requests.get(url.format(**locals()))
         if res.status_code == 429:
-            time.sleep(0.5)
+            w("💩")
+            time.sleep(60)
             continue
 
         try:
@@ -35,13 +42,16 @@ def get_all_games(user):
         else:
             break
 
+        time.sleep(2)
+
+    w("\n")
     return games
 
 def get_color(game, user):
     # Anonymous players don't get userId
     if not "userId" in game["players"][WHITE]:
         return BLACK
-    if game["players"][WHITE]["userId"] == user:
+    if game["players"][WHITE]["userId"] == user.lower():
         return WHITE
     return "black"
 
@@ -122,6 +132,7 @@ def d3_format(tree):
         BLACK: {},
         "games": tree["games"],
     }
+
     d3_tree[WHITE] = d3_branch(tree[WHITE])
     d3_tree[BLACK] = d3_branch(tree[BLACK])
     return d3_tree
@@ -133,12 +144,11 @@ def filter_games(games):
            game["moves"] and
            game["rated"] == True and
            game["perf"] in ['classical', 'blitz'] #exclude bullet
-
     ]
 
 if __name__=="__main__":
-    user = "llimllib"
-    fname = "{user}.json".format(**locals())
+    user = sys.argv[1]
+    fname = "/{user}/{user}_games.json".format(**locals())
     if os.path.isfile(fname):
         games = json.load(open(fname))
     else:
@@ -150,4 +160,5 @@ if __name__=="__main__":
     d3tree = d3_format(root)
     d3tree["username"] = user
 
-    json.dump(d3tree, open("test_tree.json", 'w'), indent=2)
+    treef = "{user}/{user}_tree.json".format(**locals())
+    json.dump(d3tree, open(treef, 'w'), indent=2)
