@@ -49,17 +49,10 @@ def build_tree(games, user):
     root = {
         WHITE: {},
         BLACK: {},
+        "games": games,
     }
 
-    for game in games[:200]:
-        # skip chess960, crazyhouse, etc
-        if game["variant"] != "standard":
-            continue
-
-        # games can be won without moves. We don't want those.
-        if not game['moves']:
-            continue
-
+    for (i, game) in enumerate(games[:300]):
         color = get_color(game, user)
         moves = game["moves"].split(" ")
         leaf = root[color]
@@ -82,14 +75,14 @@ def build_tree(games, user):
                 leaf[move]["win"] += win
                 leaf[move]["lose"] += lose
                 leaf[move]["draw"] += draw
-                leaf[move]["games"].add(game["id"])
+                leaf[move]["games"].add(i)
             else:
                 leaf[move] = {
                     "count": 1,
                     "win": win,
                     "draw": draw,
                     "lose": lose,
-                    "games": { game["id"] }
+                    "games": { i }
                 }
 
             leaf = leaf[move]
@@ -126,11 +119,22 @@ def d3_branch(root, move=None, depth=0):
 def d3_format(tree):
     d3_tree = {
         WHITE: {},
-        BLACK: {}
+        BLACK: {},
+        "games": tree["games"],
     }
     d3_tree[WHITE] = d3_branch(tree[WHITE])
     d3_tree[BLACK] = d3_branch(tree[BLACK])
     return d3_tree
+
+def filter_games(games):
+    return [
+        game for game in games
+        if game["variant"] == "standard" and
+           game["moves"] and
+           game["rated"] == True and
+           game["perf"] in ['classical', 'blitz'] #exclude bullet
+
+    ]
 
 if __name__=="__main__":
     user = "llimllib"
@@ -141,7 +145,7 @@ if __name__=="__main__":
         games = get_all_games(user)
         json.dump(games, open(fname, 'w'))
 
-    root = build_tree(games, user)
+    root = build_tree(filter_games(games), user)
 
     d3tree = d3_format(root)
     d3tree["username"] = user
