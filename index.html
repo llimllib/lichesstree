@@ -371,7 +371,7 @@ function getTree(filename) {
   });
 }
 
-getTree("user/llimllib/llimllib_tree.json");
+getTree("/lichess-user-data/user/llimllib/llimllib_tree.json");
 
 d3.select(self.frameElement).style("height", "800px");
 
@@ -542,7 +542,7 @@ d3.select('#color')
 d3.select('#user')
   .on('change', function() {
     var user = this.value;
-    getTree("user/" + user + "/" + user + "_tree.json");
+    getTree("/lichess-user-data/user/" + user + "/" + user + "_tree.json");
   });
 
 </script>
