@@ -29,38 +29,49 @@
 
 .left {
   position: absolute;
-  top: 700px;
-  left: 20px;
-  width: 200px;
-  height: 450px;
+  top: 0px;
+  left: 0px;
+  width: 300px;
+  height: 100%;
   overflow: auto;
+  background-color: rgba(208, 221, 229, 0.3);
 }
 
 .main {
   position: absolute;
   top: 0px;
-  left: 0px;
+  left: 300px;
   width: 100%;
   height: 100%;
   z-index: -1;
 }
 
+h1 {
+  display: inline-block;
+}
+
+#color {
+  margin-left: 15px;
+}
 </style>
 </head>
 <body>
   <div class="left">
+    <div>
+      <h1 id="username"></h1>
+    </div>
+    <div>
+      <select id="color">
+        <option value="white">white</option>
+        <option value="black">black</option>
+      </select>
+    </div>
     <div id="move"></div>
     <div id="results"></div>
     <div>
       <ul id="games"></ul>
     </div>
   </div>
-
-  <h1 id="username"></h1>
-  <select id="color">
-    <option value="white">white</option>
-    <option value="black">black</option>
-  </select>
 
   <div class="main">
   </div>
@@ -72,7 +83,7 @@ var margin = {top: 20, right: 120, bottom: 20, left: 120},
     width = 2000 - margin.right - margin.left,
     height = 1000 - margin.top - margin.bottom;
 
-var i = 0,
+var nodeID = 0,
     duration = 750,
     root, // the root of the currently displayed tree
     maxCount,
@@ -153,7 +164,7 @@ function update(source) {
 
   // Update the nodes…
   var node = mainGroup.selectAll("g.node")
-      .data(nodes, function(d) { return d.id || (d.id = ++i); });
+      .data(nodes, function(d) { return d.id || (d.id = ++nodeID); });
 
   // Enter any new nodes at the parent's previous position.
   var nodeEnter = node.enter().append("g")
@@ -241,9 +252,30 @@ function update(source) {
   });
 }
 
+function _getmoves(d) {
+  return d.move ? [d.move].concat(_getmoves(d.parent)) : [];
+}
+
+function getmoves(d) {
+  return _getmoves(d).reverse();
+}
+
+function movestr(d) {
+  var moves = getmoves(d),
+      movestring = "",
+      i = 0;
+
+  for (; i < moves.length / 2; i++) {
+    var movetwo = moves[(i*2)+1] ? moves[(i*2)+1] : "";
+    movestring += (i+1) + ". " + moves[i*2] + " " + movetwo + " ";
+  }
+
+  return movestring.trim();
+}
+
 function display(d) {
-  d3.select("#move").html("<em>move:</em> " + d.move);
   d3.select("#results").html(d.win+"+ "+d.draw+"= "+d.lose+"- ");
+  d3.select("#games").html("");
   d.games.forEach(function(g) {
     d3.select("#games")
       .append("li")
@@ -251,6 +283,9 @@ function display(d) {
         .attr("href", "http://lichess.org/"+g)
         .text(g)
   });
+
+  var moves = movestr(d);
+  d3.select("#move").html("<em>"+moves+"</em>");
 }
 
 // Toggle children on click.
