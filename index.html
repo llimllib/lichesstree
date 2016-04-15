@@ -276,6 +276,7 @@ function movestr(d) {
 function display(d) {
   d3.select("#results").html(d.win+"+ "+d.draw+"= "+d.lose+"- ");
   d3.select("#games").html("");
+
   d.games.forEach(function(g) {
     d3.select("#games")
       .append("li")
