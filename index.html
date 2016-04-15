@@ -31,7 +31,7 @@
   position: absolute;
   top: 0px;
   left: 0px;
-  width: 300px;
+  width: 350px;
   height: 100%;
   overflow: auto;
   background-color: rgba(208, 221, 229, 0.3);
@@ -273,16 +273,27 @@ function movestr(d) {
   return movestring.trim();
 }
 
+function result(game) {
+  if (!game.winner) {
+    return "½ - ½";
+  } else {
+    return game.winner == "white" ? "1 - 0" : "0 - 1";
+  }
+}
+
 function display(d) {
   d3.select("#results").html(d.win+"+ "+d.draw+"= "+d.lose+"- ");
   d3.select("#games").html("");
 
-  d.games.forEach(function(g) {
+  d.games.forEach(function(game_id) {
+    var game = movetree.games[game_id];
     d3.select("#games")
       .append("li")
+      .append("span")
+        .text(result(game) + " ")
       .append("a")
-        .attr("href", "http://lichess.org/"+g)
-        .text(g)
+        .attr("href", "http://lichess.org/"+game.id)
+        .text(game.players.white.userId + " - " + game.players.black.userId);
   });
 
   var moves = movestr(d);
