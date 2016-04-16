@@ -14,6 +14,7 @@ publish:
 	  git commit -m "publish script" && \
 	  git push -f -u origin gh-pages
 
+# https://github.com/cortesi/devd
 .PHONY: serve
 serve:
 	devd -o -w index.html /=. /lichess-user-data/=../lichess-user-data
