@@ -13,3 +13,7 @@ publish:
 	  git add ${FILES} && \
 	  git commit -m "publish script" && \
 	  git push -f -u origin gh-pages
+
+.PHONY: serve
+serve:
+	devd -o -w index.html /=. /lichess-user-data/=../lichess-user-data
