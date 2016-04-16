@@ -342,6 +342,11 @@ t.append("tspan")
   .text("Orange is worse results, blue is better");
 
 function showtree(tree) {
+  // calculate win rate bounds and  set the color scale appropriately to this
+  // player using the win rate quartiles
+  var rate = winrate(tree);
+  colorScale = d3.scale.linear().domain([rate[0], rate[1]]).range([0,1]).clamp(true);
+
   root = tree;
   root.x0 = height / 2;
   root.y0 = 0;
@@ -360,6 +365,29 @@ function showtree(tree) {
   strokeWidthScale = d3.scale.log().domain([1, maxCount]).range([3, 20]);
 
   update(root);
+}
+
+function _winrate(tree) {
+  var pcts = [],
+      stack = tree.children.slice();
+
+  while(stack.length) {
+    var n = stack[0];
+
+    if (n.count > 10) {
+      pcts.push(n.win / n.count);
+      n.children.forEach(function(nn) { stack.push(nn); });
+    }
+
+    stack.shift();
+  }
+
+  return pcts;
+}
+
+function winrate(tree) {
+  var winpcts = _winrate(tree).sort();
+  return [d3.quantile(winpcts, 0.25), d3.quantile(winpcts, 0.75)];
 }
 
 function getTree(filename) {
