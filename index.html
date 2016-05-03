@@ -387,6 +387,10 @@ function _winrate(tree) {
 
 function winrate(tree) {
   var winpcts = _winrate(tree).sort();
+  if (winpcts.length == 1) {
+    // just kind of make a wild guess if we don't have much data
+    return [winpcts[0]-0.1, winpcts[0]+0.1];
+  }
   return [d3.quantile(winpcts, 0.25), d3.quantile(winpcts, 0.75)];
 }
 
