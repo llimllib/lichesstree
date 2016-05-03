@@ -407,7 +407,9 @@ function getTree(filename) {
   });
 }
 
-getTree("/lichess-user-data/user/llimllib/llimllib_tree.json");
+var user = window.location.hash.slice(1) || "llimllib";
+d3.select("#user").property("value", user);
+getTree("/lichess-user-data/user/"+user+"/"+user+"_tree.json");
 
 d3.select(self.frameElement).style("height", "800px");
 
@@ -578,6 +580,7 @@ d3.select('#color')
 d3.select('#user')
   .on('change', function() {
     var user = this.value;
+    window.location.hash = this.value;
     getTree("/lichess-user-data/user/" + user + "/" + user + "_tree.json");
   });
 
