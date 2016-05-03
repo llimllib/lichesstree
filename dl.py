@@ -148,7 +148,7 @@ def filter_games(games):
 
 if __name__=="__main__":
     user = sys.argv[1]
-    fname = "/{user}/{user}_games.json".format(**locals())
+    fname = "../lichess-user-data/user/{user}/{user}_games.json".format(**locals())
     if os.path.isfile(fname):
         games = json.load(open(fname))
     else:
