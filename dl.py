@@ -15,26 +15,31 @@ def w(s):
     sys.stdout.write(s)
     sys.stdout.flush()
 
+def get_page(user, page):
+    url = ("http://en.lichess.org/api/user/{user}/games?"
+          "nb=100&with_moves=1&page={page}")
+
+    res = requests.get(url.format(**locals()))
+    if res.status_code == 429:
+        w("💩")
+        time.sleep(60)
+        # live dangerously
+        return get_page(user, page)
+
+    try:
+        return res.json()
+    except ValueError:
+        import ipdb; ipdb.set_trace()
+        raise
+
 def get_all_games(user):
     games = []
     page = 1
     while 1:
         w(".")
 
-        url = ("http://en.lichess.org/api/user/{user}/games?"
-              "nb=100&with_moves=1&page={page}")
+        body = get_page(user, page)
 
-        res = requests.get(url.format(**locals()))
-        if res.status_code == 429:
-            w("💩")
-            time.sleep(60)
-            continue
-
-        try:
-            body = res.json()
-        except ValueError:
-            import ipdb; ipdb.set_trace()
-            raise
         games += body["currentPageResults"]
 
         if body["nextPage"]:
@@ -45,6 +50,33 @@ def get_all_games(user):
         time.sleep(2)
 
     w("\n")
+    return games
+
+def get_games_until(user, game_id, timestamp):
+    games = []
+    page = 1
+    while 1:
+        w('.')
+
+        body = get_page(user, page)
+
+        for game in body["currentPageResults"]:
+            if game["id"] == game_id:
+                w('💥')
+                time.sleep(2)
+                return games
+            if timestamp > game["timestamp"]:
+                w('👎')
+
+            games.append(game)
+
+        if body["nextPage"]:
+            page += 1
+        else:
+            break
+
+        time.sleep(2)
+
     return games
 
 def get_color(game, user):
