@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+
+<!-- http://bl.ocks.org/mbostock/raw/4063550/flare.json -->
+<!-- http://bl.ocks.org/robschmuecker/7880033 -->
+<!-- http://bl.ocks.org/nitaku/564b91e8e9e7cbc7821f -->
+
+<html><head>
+<meta charset="utf-8">
+<style>
+.node {
+  cursor: pointer;
+}
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.node text {
+  font: 20px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+
+.left {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  padding-left: 10px;
+  width: 325px;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(208, 221, 229, 0.3);
+}
+
+.main {
+  position: absolute;
+  top: 0px;
+  left: 325px;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+h1 {
+  display: inline-block;
+}
+
+#color {
+  margin-left: 15px;
+}
+ul {
+  padding-left: 0px;
+}
+</style>
+</head>
+<body>
+  <div class="left">
+    <div>
+      <h1 id="username"></h1>
+    </div>
+    <div>
+      <select id="user">
+        <option value="abdelaziz_sayed">abdelaziz_sayed</option>
+        <option value="adamroyd">adamroyd</option>
+        <option value="AdrianChessNow">AdrianChessNow</option>
+        <option value="agrav123">agrav123</option>
+        <option value="alexmdaniel">alexmdaniel</option>
+        <option value="amacy">amacy</option>
+        <option value="andyquibler">andyquibler</option>
+        <option value="angborxley">angborxley</option>
+        <option value="Anunzio">Anunzio</option>
+        <option value="arlberg">arlberg</option>
+        <option value="ArmasFoster">ArmasFoster</option>
+        <option value="AshkanJah">AshkanJah</option>
+        <option value="Atrophied">Atrophied</option>
+        <option value="azuaga">azuaga</option>
+        <option value="badplayer_cm">badplayer_cm</option>
+        <option value="BamaBeeblebrox">BamaBeeblebrox</option>
+        <option value="Bloodyfox">Bloodyfox</option>
+        <option value="Boviced">Boviced</option>
+        <option value="Braffin">Braffin</option>
+        <option value="bramminator">bramminator</option>
+        <option value="Brianmcdonald">Brianmcdonald</option>
+        <option value="brwnbr">brwnbr</option>
+        <option value="ca7alyst81">ca7alyst81</option>
+        <option value="Cachaulo">Cachaulo</option>
+        <option value="cactus">cactus</option>
+        <option value="CaptNCarter">CaptNCarter</option>
+        <option value="CarlosMagnussen">CarlosMagnussen</option>
+        <option value="chad_russell">chad_russell</option>
+        <option value="Cheesehead04">Cheesehead04</option>
+        <option value="ChukoDiman">ChukoDiman</option>
+        <option value="crabbypat">crabbypat</option>
+        <option value="crafty35a">crafty35a</option>
+        <option value="ctorh">ctorh</option>
+        <option value="cyanfish">cyanfish</option>
+        <option value="Cynosure">Cynosure</option>
+        <option value="DannyKong">DannyKong</option>
+        <option value="darobertson">darobertson</option>
+        <option value="daveyjones01">daveyjones01</option>
+        <option value="dgees">dgees</option>
+        <option value="Dialh">Dialh</option>
+        <option value="Diamanthori">Diamanthori</option>
+        <option value="DiscoverChex">DiscoverChex</option>
+        <option value="djcrisce">djcrisce</option>
+        <option value="Doganof">Doganof</option>
+        <option value="dojagreen">dojagreen</option>
+        <option value="dooje">dooje</option>
+        <option value="droodjerky">droodjerky</option>
+        <option value="DurchNachtUndWind">DurchNachtUndWind</option>
+        <option value="eamonmont">eamonmont</option>
+        <option value="ebb1">ebb1</option>
+        <option value="ecstaticbroccoli">ecstaticbroccoli</option>
+        <option value="Eeevk">Eeevk</option>
+        <option value="egocrusher">egocrusher</option>
+        <option value="elbegelbe">elbegelbe</option>
+        <option value="Elixr">Elixr</option>
+        <option value="eljefe08">eljefe08</option>
+        <option value="elwood_">elwood_</option>
+        <option value="endrawes0">endrawes0</option>
+        <option value="EsolcNeveton">EsolcNeveton</option>
+        <option value="explodingllama">explodingllama</option>
+        <option value="Felixnl">Felixnl</option>
+        <option value="festivus">festivus</option>
+        <option value="flamehead">flamehead</option>
+        <option value="Flaneur">Flaneur</option>
+        <option value="ForkerofQueens">ForkerofQueens</option>
+        <option value="fourtwenty">fourtwenty</option>
+        <option value="FradtheImpaler">FradtheImpaler</option>
+        <option value="Frogger">Frogger</option>
+        <option value="ghostologist">ghostologist</option>
+        <option value="ghostult">ghostult</option>
+        <option value="GMKajrakso">GMKajrakso</option>
+        <option value="gnarlygoat">gnarlygoat</option>
+        <option value="greg-butts">greg-butts</option>
+        <option value="GreyHawk">GreyHawk</option>
+        <option value="HaakonGM">HaakonGM</option>
+        <option value="hakonj">hakonj</option>
+        <option value="harrison2">harrison2</option>
+        <option value="Hewkn">Hewkn</option>
+        <option value="hillrp">hillrp</option>
+        <option value="Hkivrak">Hkivrak</option>
+        <option value="HoxHound">HoxHound</option>
+        <option value="Hyzer">Hyzer</option>
+        <option value="iebrian">iebrian</option>
+        <option value="iedopadzert">iedopadzert</option>
+        <option value="ihateRBF">ihateRBF</option>
+        <option value="Immortality">Immortality</option>
+        <option value="infested">infested</option>
+        <option value="isaypotato">isaypotato</option>
+        <option value="jacobhess">jacobhess</option>
+        <option value="jagvillspelaschack">jagvillspelaschack</option>
+        <option value="jaivl">jaivl</option>
+        <option value="Jimmyd7777">Jimmyd7777</option>
+        <option value="jivey">jivey</option>
+        <option value="jmaltby">jmaltby</option>
+        <option value="JPTriton">JPTriton</option>
+        <option value="jshholland">jshholland</option>
+        <option value="JuanSnow">JuanSnow</option>
+        <option value="jughandle10">jughandle10</option>
+        <option value="juldiaz280992">juldiaz280992</option>
+        <option value="Jyr">Jyr</option>
+        <option value="kevinlara">kevinlara</option>
+        <option value="kimaga">kimaga</option>
+        <option value="kingscrusher-fan">kingscrusher-fan</option>
+        <option value="kirschwasser">kirschwasser</option>
+        <option value="Knoddel">Knoddel</option>
+        <option value="Kobol">Kobol</option>
+        <option value="krzem">krzem</option>
+        <option value="lakinwecker">lakinwecker</option>
+        <option value="likestal">likestal</option>
+        <option value="linail">linail</option>
+        <option value="llimllib" selected="selected">llimllib</option>
+        <option value="lukhas">lukhas</option>
+        <option value="Machrineith">Machrineith</option>
+        <option value="Matuiss2">Matuiss2</option>
+        <option value="mbazylisk">mbazylisk</option>
+        <option value="metalpawn">metalpawn</option>
+        <option value="mfink1">mfink1</option>
+        <option value="mhavgar">mhavgar</option>
+        <option value="microda">microda</option>
+        <option value="mkoga">mkoga</option>
+        <option value="modakshantanu">modakshantanu</option>
+        <option value="Mooserohde">Mooserohde</option>
+        <option value="MorallyGray">MorallyGray</option>
+        <option value="MrIan15">MrIan15</option>
+        <option value="MrLegilimens">MrLegilimens</option>
+        <option value="mrrobot">mrrobot</option>
+        <option value="MRSep">MRSep</option>
+        <option value="n4zgul">n4zgul</option>
+        <option value="nacional100">nacional100</option>
+        <option value="narud">narud</option>
+        <option value="nik0tine">nik0tine</option>
+        <option value="nitin123">nitin123</option>
+        <option value="NonMasterAlex">NonMasterAlex</option>
+        <option value="Nubas">Nubas</option>
+        <option value="nubnub57">nubnub57</option>
+        <option value="OldTom">OldTom</option>
+        <option value="olu_dara">olu_dara</option>
+        <option value="Orgsalsa">Orgsalsa</option>
+        <option value="osskjc">osskjc</option>
+        <option value="outerheaven92">outerheaven92</option>
+        <option value="Pasternak">Pasternak</option>
+        <option value="Pawnprecaution">Pawnprecaution</option>
+        <option value="Pawnpunter">Pawnpunter</option>
+        <option value="Petruchio">Petruchio</option>
+        <option value="Philgood84">Philgood84</option>
+        <option value="Pitrinu">Pitrinu</option>
+        <option value="pjh2sw">pjh2sw</option>
+        <option value="Plawo">Plawo</option>
+        <option value="Practicedave">Practicedave</option>
+        <option value="Prune2000">Prune2000</option>
+        <option value="Questoguy">Questoguy</option>
+        <option value="quirked">quirked</option>
+        <option value="R-Mena">R-Mena</option>
+        <option value="redhoax">redhoax</option>
+        <option value="resonantpillow">resonantpillow</option>
+        <option value="Revoof">Revoof</option>
+        <option value="riemannn">riemannn</option>
+        <option value="RuizBR">RuizBR</option>
+        <option value="rwill128">rwill128</option>
+        <option value="sangan">sangan</option>
+        <option value="saschlars">saschlars</option>
+        <option value="scarff">scarff</option>
+        <option value="scottm91">scottm91</option>
+        <option value="Seb32">Seb32</option>
+        <option value="shafdanny">shafdanny</option>
+        <option value="Shammies">Shammies</option>
+        <option value="shetoo">shetoo</option>
+        <option value="sigvei">sigvei</option>
+        <option value="SirDore">SirDore</option>
+        <option value="Sjaart">Sjaart</option>
+        <option value="solaroar">solaroar</option>
+        <option value="soldadofiel">soldadofiel</option>
+        <option value="somethingpretentious">somethingpretentious</option>
+        <option value="Sonata2">Sonata2</option>
+        <option value="Steiger07">Steiger07</option>
+        <option value="stoy">stoy</option>
+        <option value="sturmwehr_45">sturmwehr_45</option>
+        <option value="super_sanic">super_sanic</option>
+        <option value="SuperVJ">SuperVJ</option>
+        <option value="theino">theino</option>
+        <option value="TheKnug">TheKnug</option>
+        <option value="thephobia">thephobia</option>
+        <option value="Thetasquared">Thetasquared</option>
+        <option value="Thshupe">Thshupe</option>
+        <option value="tnan123">tnan123</option>
+        <option value="Toddle">Toddle</option>
+        <option value="Toj">Toj</option>
+        <option value="Tom_kg">Tom_kg</option>
+        <option value="Toperoco">Toperoco</option>
+        <option value="tothe6thpower">tothe6thpower</option>
+        <option value="tworivers">tworivers</option>
+        <option value="tylerc0816">tylerc0816</option>
+        <option value="Unihedron">Unihedron</option>
+        <option value="ventricule">ventricule</option>
+        <option value="vishysoisse">vishysoisse</option>
+        <option value="WhizNL">WhizNL</option>
+      </select>
+
+      <select id="color">
+        <option value="white">white</option>
+        <option value="black">black</option>
+      </select>
+    </div>
+    <div id="move"></div>
+    <div id="results"></div>
+    <div>
+      <ul id="games"></ul>
+    </div>
+  </div>
+
+  <div class="main">
+  </div>
+
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script>
+
+var margin = {top: 20, right: 120, bottom: 20, left: 40},
+    width = 2000 - margin.right - margin.left,
+    height = 1000 - margin.top - margin.bottom;
+
+var nodeID = 0,
+    duration = 750,
+    root, // the root of the currently displayed tree
+    maxCount,
+    strokeWidthScale,
+    movetree;
+
+var r = d3.rgb(239,138,98),
+    b = d3.rgb(103,169,207),
+    gradient = d3.interpolateRgb(r, b),
+    colorScale = d3.scale.linear().domain([0.25, 0.65]).range([0,1]).clamp(true);
+
+function zoom() {
+  var x = d3.event.translate[0] + margin.left,
+      y = d3.event.translate[1] + margin.top;
+  mainGroup.attr("transform", "translate("+x+","+y+")scale(" + d3.event.scale + ")");
+}
+
+var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
+
+var tree = d3.layout.tree()
+    .size([height, width])
+    .sort(function(a, b) {
+      return b.count - a.count;
+    })
+    .separation(function(a, b) { return 35; });
+
+var diagonal = d3.svg.diagonal()
+    .projection(function(d) { return [d.y, d.x]; });
+
+var svg = d3.select(".main").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .call(zoomListener),
+    mainGroup = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var t = svg.append("text")
+  .attr("x", "20")
+  .attr("dy", "1.4em")
+  .style("font-style", "italic")
+
+t.append("tspan")
+  .attr("x", 20)
+  .attr("dy", "1.4em")
+  .text("Click a node to expand it")
+t.append("tspan")
+  .attr("x", 20)
+  .attr("dy", "1.4em")
+  .text("Click + drag to pan, scroll to zoom")
+t.append("tspan")
+  .attr("x", 20)
+  .attr("dy", "1.4em")
+  .text("Orange is worse results, blue is better");
+
+function showtree(tree) {
+  // calculate win rate bounds and  set the color scale appropriately to this
+  // player using the win rate quartiles
+  var rate = winrate(tree);
+  colorScale = d3.scale.linear().domain([rate[0], rate[1]]).range([0,1]).clamp(true);
+
+  root = tree;
+  root.x0 = height / 2;
+  root.y0 = 0;
+
+  function collapse(d) {
+    if (d.children) {
+      d._children = d.children;
+      d._children.forEach(collapse);
+      d.children = null;
+    }
+  }
+
+  root.children.forEach(collapse);
+
+  maxCount = d3.max(root.children.map(function(n) { return n.count; }));
+  strokeWidthScale = d3.scale.log().domain([1, maxCount]).range([3, 20]);
+
+  update(root);
+}
+
+function _winrate(tree) {
+  var pcts = [],
+      stack = tree.children.slice();
+
+  while(stack.length) {
+    var n = stack[0];
+
+    if (n.count > 3) {
+      pcts.push(n.win / n.count);
+      n.children.forEach(function(nn) { stack.push(nn); });
+    }
+
+    stack.shift();
+  }
+
+  return pcts;
+}
+
+function winrate(tree) {
+  var winpcts = _winrate(tree).sort();
+  if (winpcts.length == 1) {
+    // just kind of make a wild guess if we don't have much data
+    return [winpcts[0]-0.1, winpcts[0]+0.1];
+  }
+  return [d3.quantile(winpcts, 0.25), d3.quantile(winpcts, 0.75)];
+}
+
+function getTree(filename) {
+  d3.json(filename, function(error, movetree_data) {
+    if (error) throw error;
+
+    movetree = movetree_data;
+
+    document.querySelector("#username").innerText = movetree.username;
+
+    // XXX TODO: show root color
+    showtree(movetree.white);
+  });
+}
+
+var user = window.location.hash.slice(1) || "llimllib";
+d3.select("#user").property("value", user);
+getTree("/lichess-user-data/user/"+user+"/"+user+"_tree.json");
+
+d3.select(self.frameElement).style("height", "800px");
+
+function update(source) {
+  // Compute the new tree layout.
+  var nodes = tree.nodes(root).reverse(),
+      links = tree.links(nodes);
+
+  // Normalize for fixed-depth.
+  nodes.forEach(function(d) { d.y = d.depth * 180; });
+
+  // Update the nodes…
+  var node = mainGroup.selectAll("g.node")
+      .data(nodes, function(d) { return d.id || (d.id = ++nodeID); });
+
+  // Enter any new nodes at the parent's previous position.
+  var nodeEnter = node.enter().append("g")
+      .attr("class", "node")
+      .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+      .on("click", click);
+
+  nodeEnter.append("circle")
+      .attr("r", function(d) {
+        return 20;
+      })
+      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+
+  nodeEnter.append("text")
+      .attr("x", function(d) { return 0; })
+      .attr("dy", ".35em")
+      .attr("text-anchor", "middle")
+      .text(function(d) { return d.move; })
+      .style("fill-opacity", 1e-6);
+
+  // Transition nodes to their new position.
+  var nodeUpdate = node.transition()
+      .duration(duration)
+      .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
+
+  nodeUpdate.select("circle")
+      .attr("r", function(d) {
+        return 20;
+      })
+      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+
+  nodeUpdate.select("text")
+      .style("fill-opacity", 1);
+
+  // Transition exiting nodes to the parent's new position.
+  var nodeExit = node.exit().transition()
+      .duration(duration)
+      .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+      .remove();
+
+  nodeExit.select("circle")
+      .attr("r", 1e-6);
+
+  nodeExit.select("text")
+      .style("fill-opacity", 1e-6);
+
+  // Update the links…
+  var link = mainGroup.selectAll("path.link")
+      .data(links, function(d) { return d.target.id; });
+
+  // Enter any new links at the parent's previous position.
+  link.enter().insert("path", "g")
+      .attr("class", "link")
+      .attr("d", function(d) {
+        var o = {x: source.x0, y: source.y0};
+        return diagonal({source: o, target: o});
+      })
+      .style("stroke", function(d) {
+        return gradient(colorScale(d.target.win / d.target.count));
+      })
+      .style("stroke-width", function(d) { return strokeWidthScale(d.target.count); });
+
+  // Transition links to their new position.
+  link.transition()
+      .duration(duration)
+      .attr("d", diagonal)
+      .style("stroke", function(d) {
+        return gradient(colorScale(d.target.win / d.target.count));
+      })
+      .style("stroke-width", function(d) { return strokeWidthScale(d.target.count); });
+
+  // Transition exiting nodes to the parent's new position.
+  link.exit().transition()
+      .duration(duration)
+      .attr("d", function(d) {
+        var o = {x: source.x, y: source.y};
+        return diagonal({source: o, target: o});
+      })
+      .remove();
+
+  // Stash the old positions for transition.
+  nodes.forEach(function(d) {
+    d.x0 = d.x;
+    d.y0 = d.y;
+  });
+}
+
+function _getmoves(d) {
+  return d.move ? [d.move].concat(_getmoves(d.parent)) : [];
+}
+
+function getmoves(d) {
+  return _getmoves(d).reverse();
+}
+
+function movestr(d) {
+  var moves = getmoves(d),
+      movestring = "",
+      i = 0;
+
+  for (; i < moves.length / 2; i++) {
+    var movetwo = moves[(i*2)+1] ? moves[(i*2)+1] : "";
+    movestring += (i+1) + ". " + moves[i*2] + " " + movetwo + " ";
+  }
+
+  return movestring.trim();
+}
+
+function result(game) {
+  if (!game.winner) {
+    return "½ - ½";
+  } else {
+    return game.winner == "white" ? "1 - 0" : "0 - 1";
+  }
+}
+
+function display(d) {
+  d3.select("#results").html(d.win+"+ "+d.draw+"= "+d.lose+"- ");
+  d3.select("#games").html("");
+
+  d.games.forEach(function(game_id) {
+    var game = movetree.games[game_id];
+    d3.select("#games")
+      .append("li")
+      .append("span")
+        .text(result(game) + " ")
+      .append("a")
+        .attr("href", "http://lichess.org/"+game.id)
+        .text(game.players.white.userId + " - " + game.players.black.userId);
+  });
+
+  var moves = movestr(d);
+  d3.select("#move").html("<em>"+moves+"</em>");
+}
+
+// Toggle children on click.
+function click(d) {
+  if (d.children) {
+    d._children = d.children;
+    d.children = null;
+  } else {
+    d.children = d._children;
+    d._children = null;
+  }
+  update(d);
+  display(d);
+}
+
+d3.select('#color')
+  .on('change', function() {
+    showtree(movetree[this.value]);
+  });
+
+d3.select('#user')
+  .on('change', function() {
+    var user = this.value;
+    window.location.hash = this.value;
+    getTree("/lichess-user-data/user/" + user + "/" + user + "_tree.json");
+  });
+
+</script>
+</body>
