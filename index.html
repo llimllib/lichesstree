@@ -374,7 +374,7 @@ function _winrate(tree) {
   while(stack.length) {
     var n = stack[0];
 
-    if (n.count > 10) {
+    if (n.count > 3) {
       pcts.push(n.win / n.count);
       n.children.forEach(function(nn) { stack.push(nn); });
     }
