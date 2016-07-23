@@ -1,6 +1,13 @@
 TMP := $(shell mktemp -d)
 FILES := index.html
 
+update:
+	python dl_all.py
+	python build_trees.py
+	cd ../lichess-user-data/ && \
+		git commit -a -m "update user data" && \
+		git push
+
 .PHONY: publish
 publish:
 	git clone --depth 1 `git config --get remote.origin.url` ${TMP}
