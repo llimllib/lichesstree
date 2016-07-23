@@ -16,7 +16,10 @@ def w(s):
     sys.stdout.flush()
 
 def get_page(user, page):
-    url = ("http://en.lichess.org/api/user/{user}/games?"
+    # this endpoint is currently dead, therefore so is lichess opening tree
+    # see https://github.com/s-ted/liPGN/issues/4 ; there doesn't seem to
+    # be a corresponding issue in the lichess repo
+    url = ("https://en.lichess.org/api/user/{user}/games?"
           "nb=100&with_moves=1&page={page}")
 
     res = requests.get(url.format(**locals()))
