@@ -1,33 +1,59 @@
 # -*- coding: utf8 -*-
 from copy import deepcopy
 import json
+import logging
 import os.path
+from os import mkdir
 import pickle
 from pprint import pprint as pp
 import sys
 import time
+
 import requests
 
 BLACK = "black"
 WHITE = "white"
 
+import logging
+logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
+
+# personal communication with lukhas suggests that for now this is the best
+# UA to use, may help prevent 404s
+UA = "Mozilla/5.0 (X11; Linux x86_64; rv:48.0) Gecko/20100101 Firefox/48.0"
+
 def w(s):
+    return
     sys.stdout.write(s)
     sys.stdout.flush()
 
-def get_page(user, page):
+def get_timestamp(game):
+    if 'timestamp' in game: return game['timestamp']
+    if 'createdAt' in game: return game['createdAt']
+    raise KeyError(game)
+
+def get_page(user, page, failures=0):
     # this endpoint is currently dead, therefore so is lichess opening tree
     # see https://github.com/s-ted/liPGN/issues/4 ; there doesn't seem to
     # be a corresponding issue in the lichess repo
     url = ("https://en.lichess.org/api/user/{user}/games?"
           "nb=100&with_moves=1&page={page}")
 
-    res = requests.get(url.format(**locals()))
-    if res.status_code == 429:
-        w("💩")
-        time.sleep(60)
-        # live dangerously
-        return get_page(user, page)
+    print(url.format(**locals()))
+    res = requests.get(url.format(**locals()),
+            headers={'User-Agent': UA})
+
+    # Seems like now there are 404s as well as 429s
+    if res.status_code in [404, 429]:
+        print("Failure status code {}".format(res.status_code))
+        if failures < 3:
+            w("💩")
+            # 60, 240, 960
+            print("sleep {}".format(60 * 4 ** failures))
+            time.sleep(60 * 4 ** failures)
+            # live dangerously
+            return get_page(user, page, failures+1)
+        else:
+            import ipdb; ipdb.set_trace()
 
     try:
         return res.json()
@@ -45,12 +71,12 @@ def get_all_games(user):
 
         games += body["currentPageResults"]
 
-        if body["nextPage"]:
+        if body["nextPage"] and int(page) < 5:
             page += 1
         else:
             break
 
-        time.sleep(2)
+        time.sleep(3)
 
     w("\n")
     return games
@@ -64,21 +90,24 @@ def get_games_until(user, game_id, timestamp):
         body = get_page(user, page)
 
         for game in body["currentPageResults"]:
-            if game["id"] == game_id:
-                w('💥')
-                time.sleep(2)
-                return games
-            if timestamp > game["timestamp"]:
-                w('👎')
+            try:
+                if game["id"] == game_id:
+                    w('💥')
+                    time.sleep(3)
+                    return games
+                if timestamp > get_timestamp(game):
+                    w('👎')
 
-            games.append(game)
+                games.append(game)
+            except KeyError:
+                import ipdb; ipdb.set_trace()
 
-        if body["nextPage"]:
+        if body["nextPage"] and int(page) < 5:
             page += 1
         else:
             break
 
-        time.sleep(2)
+        time.sleep(3)
 
     return games
 
@@ -183,17 +212,29 @@ def filter_games(games):
 
 if __name__=="__main__":
     user = sys.argv[1]
-    fname = "../lichess-user-data/user/{user}/{user}_games.json".format(**locals())
+    dirname = "../lichess-user-data/user/{user}".format(**locals())
+    fname = "{dirname}/{user}_games.json".format(**locals())
+    if not os.path.isdir(dirname):
+        mkdir(dirname)
+
     if os.path.isfile(fname):
-        games = json.load(open(fname))
+        with open(fname) as f:
+            games = json.load(f)
+
+        try:
+            t = get_timestamp(games[0])
+        except KeyError:
+            import ipdb; ipdb.set_trace()
+        w("\nupdating {user}: ".format(**locals()))
+
+        # make sure to prepend so we maintain the games ordered by date
+        new_games = get_games_until(user, games[0]["id"], t)
+        updated_games = new_games + games
+
+        with open(fname, 'w') as f:
+            json.dump(updated_games, f)
+
+        w("\n")
     else:
         games = get_all_games(user)
         json.dump(games, open(fname, 'w'))
-
-    root = build_tree(filter_games(games), user)
-
-    d3tree = d3_format(root)
-    d3tree["username"] = user
-
-    treef = "{user}/{user}_tree.json".format(**locals())
-    json.dump(d3tree, open(treef, 'w'), indent=2)
