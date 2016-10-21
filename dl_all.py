@@ -1,10 +1,11 @@
-from dl import get_all_games, get_games_until
+from dl import get_all_games, get_games_until, get_timestamp
 import json
 from os import mkdir
 from os.path import isfile, isdir
 import sys
 
 def w(s):
+    return
     sys.stdout.write(s)
     sys.stdout.flush()
 
@@ -84,7 +85,10 @@ for user in users:
         with open(fname) as f:
             games = json.load(f)
 
-        t = games[0]["timestamp"]
+        try:
+            t = get_timestamp(games[0])
+        except KeyError:
+            import ipdb; ipdb.set_trace()
         w("\nupdating {user}: ".format(**locals()))
 
         # make sure to prepend so we maintain the games ordered by date

@@ -1,5 +1,7 @@
-from os import mkdir from os.path import isfile, isdir from dl import
-build_tree, filter_games, d3_format import json
+from os import mkdir
+from os.path import isfile, isdir
+from dl import build_tree, filter_games, d3_format
+import json
 
 users = {'prune2000', 'ChemicalMagician', 'endrawes0', 'spotless_mind',
         'jshholland', 'dojagreen', 'Hyzer', 'mfink1', 'dose7781', 'Boviced',

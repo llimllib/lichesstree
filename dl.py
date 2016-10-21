@@ -14,15 +14,11 @@ import requests
 BLACK = "black"
 WHITE = "white"
 
-import logging
-logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
-
 # personal communication with lukhas suggests that for now this is the best
 # UA to use, may help prevent 404s
 UA = "Mozilla/5.0 (X11; Linux x86_64; rv:48.0) Gecko/20100101 Firefox/48.0"
 
 def w(s):
-    return
     sys.stdout.write(s)
     sys.stdout.flush()
 
